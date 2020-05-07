@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="300.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.privetdruk.slyeye.controller.SettingController">
    <children>
       <TitledPane animated="false" collapsible="false" text="Settings" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <content>
@@ -35,8 +35,8 @@
                                       </rowConstraints>
                                        <children>
                                           <Label text="Blink / Look" />
-                                          <Slider blockIncrement="5.0" max="60.0" showTickLabels="true" showTickMarks="true" value="20.0" GridPane.columnIndex="2" />
-                                          <TextField prefWidth="32.0" GridPane.columnIndex="1" />
+                                          <Slider fx:id="blinkReminderSlider" blockIncrement="5.0" max="60.0" showTickLabels="true" showTickMarks="true" value="20.0" GridPane.columnIndex="2" />
+                                          <TextField fx:id="blinkReminderTF" prefWidth="32.0" GridPane.columnIndex="1" />
                                        </children>
                                     </GridPane>
                                     <GridPane GridPane.rowIndex="1">
@@ -63,10 +63,10 @@
                                                 <Button mnemonicParsing="false" text="Delete" GridPane.columnIndex="2" />
                                              </children>
                                           </GridPane>
-                                          <TableView prefHeight="200.0" prefWidth="237.0" GridPane.rowIndex="1">
+                                          <TableView fx:id="exerciseTable" prefHeight="200.0" prefWidth="237.0" GridPane.rowIndex="1">
                                             <columns>
-                                              <TableColumn prefWidth="49.0" text="№" />
-                                              <TableColumn prefWidth="232.0" resizable="false" text="Time" />
+                                              <TableColumn fx:id="exerciseIdColumn" prefWidth="49.0" text="№" />
+                                              <TableColumn fx:id="exerciseTimeColumn" prefWidth="232.0" resizable="false" text="Time" />
                                             </columns>
                                           </TableView>
                                        </children>
