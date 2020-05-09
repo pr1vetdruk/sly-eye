@@ -7,12 +7,17 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import ru.privetdruk.slyeye.controller.ControlController;
+import ru.privetdruk.slyeye.model.Setting;
 
 import java.io.IOException;
 
 public class Application extends javafx.application.Application {
+    private boolean run;
+
     private Stage stage;
     private BorderPane rootLayout;
+
+    private Setting settings = new Setting();
 
     public static void main(String[] args) {
         launch(args);
@@ -33,8 +38,24 @@ public class Application extends javafx.application.Application {
         }
     }
 
+    public boolean isRun() {
+        return run;
+    }
+
+    public void setRun(boolean run) {
+        this.run = run;
+    }
+
     public Stage getStage() {
         return stage;
+    }
+
+    public Setting getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Setting settings) {
+        this.settings = settings;
     }
 
     private void initRootLayout() {
@@ -59,7 +80,7 @@ public class Application extends javafx.application.Application {
             rootLayout.setTop(controlView);
 
             ControlController controller = loader.getController();
-            controller.setApplication(this);
+            controller.configure(this);
         } catch (IOException e) {
             e.printStackTrace();
         }

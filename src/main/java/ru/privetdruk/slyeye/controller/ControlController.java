@@ -3,6 +3,7 @@ package ru.privetdruk.slyeye.controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import ru.privetdruk.slyeye.Application;
+import ru.privetdruk.slyeye.model.Setting;
 import ru.privetdruk.slyeye.util.NotificationUtil;
 
 import java.awt.*;
@@ -10,14 +11,19 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class ControlController {
     private Application application;
+    private Setting settings;
 
     private final Timer notificationTimer = new Timer();
+    private SystemTray tray;
+    private TrayIcon trayIcon;
 
-    public void setApplication(Application application) {
+    public void configure(Application application) {
         this.application = application;
+        settings = application.getSettings();
     }
 
     @FXML
@@ -27,11 +33,26 @@ public class ControlController {
     }
 
     @FXML
-    public void onClickMinimize() {
+    private void onClickRun() {
+        application.setRun(true);
+    }
+
+    @FXML
+    private void onClickStop() {
+        application.setRun(false);
+    }
+
+    @FXML
+    private void onClickMinimize() {
         application.getStage().hide();
     }
 
-    public void minimizeToTray() {
+    @FXML
+    private void onClickExit() {
+        exit();
+    }
+
+    private void minimizeToTray() {
         try {
             Toolkit.getDefaultToolkit();
 
@@ -40,11 +61,11 @@ public class ControlController {
                 Platform.exit();
             }
 
-            SystemTray tray = SystemTray.getSystemTray();
+            tray = SystemTray.getSystemTray();
 
-            TrayIcon trayIcon = configureTrayIcon();
-            trayIcon.setPopupMenu(configurePopupMenu(tray, trayIcon));
-            addNotificationSchedule(trayIcon);
+            trayIcon = configureTrayIcon();
+            trayIcon.setPopupMenu(configurePopupMenu());
+            addNotificationSchedule();
 
             tray.add(trayIcon);
         } catch (java.awt.AWTException | IOException e) {
@@ -52,23 +73,27 @@ public class ControlController {
         }
     }
 
-    private void addNotificationSchedule(TrayIcon trayIcon) {
+    private void addNotificationSchedule() {
         notificationTimer.schedule(
                 new TimerTask() {
                     @Override
                     public void run() {
-                        javax.swing.SwingUtilities.invokeLater(() ->
-                                trayIcon.displayMessage(
-                                        "Hey!",
-                                        "it's time to get distracted",
-                                        TrayIcon.MessageType.INFO
-                                )
+                        javax.swing.SwingUtilities.invokeLater(() -> {
+                                    if (application.isRun()) {
+                                        trayIcon.displayMessage(
+                                                "Hey!",
+                                                "it's time to get distracted",
+                                                TrayIcon.MessageType.INFO
+                                        );
+                                    }
+                                }
                         );
                     }
                 },
-                5_000,
-                60_000
+                1_000,
+                TimeUnit.MINUTES.toMillis(settings.getBlinkReminder())
         );
+
     }
 
     private TrayIcon configureTrayIcon() throws IOException {
@@ -80,7 +105,7 @@ public class ControlController {
         return trayIcon;
     }
 
-    private PopupMenu configurePopupMenu(SystemTray tray, TrayIcon trayIcon) {
+    private PopupMenu configurePopupMenu() {
         java.awt.MenuItem maximizeItem = new java.awt.MenuItem("Maximize");
         maximizeItem.addActionListener(event -> Platform.runLater(application::showStage));
 
@@ -91,9 +116,7 @@ public class ControlController {
         java.awt.MenuItem exitItem = new java.awt.MenuItem("Exit");
         exitItem.setFont(monospacedFont);
         exitItem.addActionListener(event -> {
-            notificationTimer.cancel();
-            Platform.exit();
-            tray.remove(trayIcon);
+            exit();
         });
 
         final java.awt.PopupMenu popup = new java.awt.PopupMenu();
@@ -104,5 +127,11 @@ public class ControlController {
         return popup;
     }
 
-
+    private void exit() {
+        notificationTimer.cancel();
+        Platform.exit();
+        if (tray != null && trayIcon != null) {
+            tray.remove(trayIcon);
+        }
+    }
 }

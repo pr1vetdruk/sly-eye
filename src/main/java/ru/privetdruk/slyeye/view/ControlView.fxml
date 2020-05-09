@@ -2,18 +2,22 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="60.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.privetdruk.slyeye.controller.ControlController">
-   <children>
-      <TitledPane animated="false" collapsible="false" layoutX="-37.0" layoutY="-66.0" text="Control" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-               <children>
-                  <Button layoutX="5.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="61.0" text="Start" />
-                  <Button layoutX="73.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="64.0" text="Stop" />
-                  <Button fx:id="minimizeButton" layoutX="144.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickMinimize" prefHeight="25.0" prefWidth="94.0" text="Minimize" />
-                  <Button layoutX="244.0" layoutY="5.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" text="Exit" />
-               </children></AnchorPane>
-        </content>
-      </TitledPane>
-   </children>
+<AnchorPane prefHeight="60.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.privetdruk.slyeye.controller.ControlController">
+    <children>
+        <TitledPane animated="false" collapsible="false" layoutX="-37.0" layoutY="-66.0" text="Control" AnchorPane.bottomAnchor="0.0"
+                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                    <children>
+                        <Button layoutX="5.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickRun" prefHeight="25.0" prefWidth="61.0" text="Run"/>
+                        <Button layoutX="73.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickStop" prefHeight="25.0" prefWidth="64.0" text="Stop"/>
+                        <Button layoutX="144.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickMinimize" prefHeight="25.0" prefWidth="94.0"
+                                text="Minimize"/>
+                        <Button layoutX="244.0" layoutY="5.0" mnemonicParsing="false" onAction="#onClickExit" prefHeight="25.0" prefWidth="50.0" text="Exit"/>
+                    </children>
+                </AnchorPane>
+            </content>
+        </TitledPane>
+    </children>
 </AnchorPane>
