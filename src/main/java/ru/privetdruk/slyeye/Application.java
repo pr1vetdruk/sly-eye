@@ -12,7 +12,7 @@ import ru.privetdruk.slyeye.model.Setting;
 import java.io.IOException;
 
 public class Application extends javafx.application.Application {
-    private boolean run;
+    private boolean run = false;
 
     private Stage stage;
     private BorderPane rootLayout;

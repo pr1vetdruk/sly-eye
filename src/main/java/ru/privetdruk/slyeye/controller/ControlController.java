@@ -17,7 +17,7 @@ public class ControlController {
     private Application application;
     private Setting settings;
 
-    private final Timer notificationTimer = new Timer();
+    private Timer notificationTimer = new Timer();
     private SystemTray tray;
     private TrayIcon trayIcon;
 
@@ -35,11 +35,14 @@ public class ControlController {
     @FXML
     private void onClickRun() {
         application.setRun(true);
+        addNotificationSchedule();
     }
 
     @FXML
     private void onClickStop() {
         application.setRun(false);
+        notificationTimer.cancel();
+        notificationTimer = new Timer();
     }
 
     @FXML
@@ -65,7 +68,6 @@ public class ControlController {
 
             trayIcon = configureTrayIcon();
             trayIcon.setPopupMenu(configurePopupMenu());
-            addNotificationSchedule();
 
             tray.add(trayIcon);
         } catch (java.awt.AWTException | IOException e) {
@@ -79,13 +81,11 @@ public class ControlController {
                     @Override
                     public void run() {
                         javax.swing.SwingUtilities.invokeLater(() -> {
-                                    if (application.isRun()) {
-                                        trayIcon.displayMessage(
-                                                "Hey!",
-                                                "it's time to get distracted",
-                                                TrayIcon.MessageType.INFO
-                                        );
-                                    }
+                                    trayIcon.displayMessage(
+                                            "Hey!",
+                                            "it's time to get distracted",
+                                            TrayIcon.MessageType.INFO
+                                    );
                                 }
                         );
                     }
