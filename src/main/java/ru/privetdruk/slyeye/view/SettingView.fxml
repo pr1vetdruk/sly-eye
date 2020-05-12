@@ -59,7 +59,7 @@
                                              <children>
                                                 <Label text="Exercise schedule" />
                                                 <Button mnemonicParsing="false" text="Add" GridPane.columnIndex="1" />
-                                                <Button mnemonicParsing="false" text="Delete" GridPane.columnIndex="2" />
+                                                <Button fx:id="deleteExerciseButton" disable="true" mnemonicParsing="false" onAction="#onClickDelete" text="Delete" GridPane.columnIndex="2" />
                                              </children>
                                           </GridPane>
                                           <TableView fx:id="exerciseTable" prefHeight="200.0" prefWidth="237.0" GridPane.rowIndex="1">

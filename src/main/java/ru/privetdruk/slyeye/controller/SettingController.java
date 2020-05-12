@@ -4,10 +4,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import ru.privetdruk.slyeye.model.Exercise;
 import ru.privetdruk.slyeye.model.Setting;
 
@@ -20,6 +17,8 @@ public class SettingController {
     private Slider blinkReminderSlider;
 
     @FXML
+    private Button deleteExerciseButton;
+    @FXML
     private TableView<Exercise> exerciseTable;
     @FXML
     private TableColumn<Exercise, Integer> exerciseIdColumn;
@@ -30,6 +29,23 @@ public class SettingController {
 
     @FXML
     private void initialize() {
+        addListener();
+        loadTestData();
+        fillingOutForms();
+    }
+
+    @FXML
+    private void onClickDelete() {
+        Exercise selectedItem = exerciseTable.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            settings.getExerciseData().remove(selectedItem);
+            exerciseTable.getItems().remove(selectedItem);
+
+            deleteExerciseButton.setDisable(settings.getExerciseData().isEmpty());
+        }
+    }
+
+    private void addListener() {
         blinkReminderSlider.valueProperty().addListener(((observableValue, oldValue, newValue) -> {
             blinkReminderTF.setText(Integer.toString(newValue.intValue()));
         }));
@@ -49,7 +65,14 @@ public class SettingController {
             blinkReminderSlider.setValue(value);
         }));
 
-        loadTestData();
+        exerciseTable.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {
+            if (exerciseTable.getSelectionModel().getSelectedItem() != null) {
+                deleteExerciseButton.setDisable(false);
+            }
+        });
+    }
+
+    private void fillingOutForms() {
         blinkReminderTF.setText(String.valueOf(settings.getBlinkReminder()));
         exerciseTable.setItems(FXCollections.observableArrayList(settings.getExerciseData()));
         exerciseIdColumn.setCellValueFactory(cellData -> cellData.getValue().exerciseIdProperty().asObject());

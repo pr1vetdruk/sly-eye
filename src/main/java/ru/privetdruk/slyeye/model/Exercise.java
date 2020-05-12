@@ -4,6 +4,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 
 import java.time.LocalTime;
+import java.util.Objects;
 
 public class Exercise implements Comparable<Exercise> {
     private final IntegerProperty exerciseId;
@@ -21,6 +22,24 @@ public class Exercise implements Comparable<Exercise> {
     @Override
     public int compareTo(Exercise o) {
         return Integer.compare(this.exerciseId.get(), o.exerciseId.get());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Exercise exercise = (Exercise) o;
+
+        if (!Objects.equals(exerciseId, exercise.exerciseId)) return false;
+        return Objects.equals(exerciseTime, exercise.exerciseTime);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = exerciseId != null ? exerciseId.hashCode() : 0;
+        result = 31 * result + (exerciseTime != null ? exerciseTime.hashCode() : 0);
+        return result;
     }
 
     public int getExerciseId() {
