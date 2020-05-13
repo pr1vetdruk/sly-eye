@@ -61,7 +61,7 @@ public class Application extends javafx.application.Application {
     private void initRootLayout() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(Application.class.getResource("view/RootLayout.fxml"));
+            loader.setLocation(Application.class.getResource("/view/RootLayout.fxml"));
             rootLayout = loader.load();
 
             Scene scene = new Scene(rootLayout);
@@ -75,7 +75,7 @@ public class Application extends javafx.application.Application {
     private void initControl() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(Application.class.getResource("view/ControlView.fxml"));
+            loader.setLocation(Application.class.getResource("/view/ControlView.fxml"));
             AnchorPane controlView = loader.load();
             rootLayout.setTop(controlView);
 
@@ -89,7 +89,7 @@ public class Application extends javafx.application.Application {
     private void initSettings() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(Application.class.getResource("view/SettingView.fxml"));
+            loader.setLocation(Application.class.getResource("/view/SettingView.fxml"));
             AnchorPane settingView = loader.load();
 
             rootLayout.setBottom(settingView);
