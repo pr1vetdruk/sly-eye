@@ -1,15 +1,3 @@
-
-buildscript {
-    repositories {
-        maven {
-            setUrl("https://plugins.gradle.org/m2/")
-        }
-    }
-    dependencies {
-        classpath("org.openjfx:javafx-plugin:0.0.8")
-    }
-}
-
 plugins {
     id 'java'
     id 'application'
@@ -17,9 +5,8 @@ plugins {
 }
 
 javafx {
-    version = '12'
+    version = '14.0.1'
     modules = [ 'javafx.controls', 'javafx.fxml' ]
-    configuration = 'compileOnly'
 }
 
 repositories {
@@ -33,5 +20,12 @@ dependencies {
 }
 
 application {
-    mainClassName = 'ru.privetdruk.slyeye.Application'
+    mainClassName = 'ru.privetdruk.slyeye.Launcher'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'ru.privetdruk.slyeye.Launcher'
+    }
+    from configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
 }
