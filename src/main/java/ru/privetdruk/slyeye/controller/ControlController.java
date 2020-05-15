@@ -13,7 +13,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-public class ControlController {
+public class ControlController implements Configurable {
     private Application application;
     private Setting settings;
 
@@ -21,6 +21,7 @@ public class ControlController {
     private SystemTray tray;
     private TrayIcon trayIcon;
 
+    @Override
     public void configure(Application application) {
         this.application = application;
         settings = application.getSettings();

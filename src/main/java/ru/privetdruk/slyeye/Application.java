@@ -6,6 +6,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import ru.privetdruk.slyeye.controller.Configurable;
 import ru.privetdruk.slyeye.controller.ControlController;
 import ru.privetdruk.slyeye.model.Setting;
 
@@ -75,12 +76,11 @@ public class Application extends javafx.application.Application {
     private void initControl() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(Application.class.getResource("/view/ControlView.fxml"));
+            loader.setLocation(Application.class.getResource("/view/Control.fxml"));
             AnchorPane controlView = loader.load();
             rootLayout.setTop(controlView);
 
-            ControlController controller = loader.getController();
-            controller.configure(this);
+            configureController(loader);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -89,10 +89,11 @@ public class Application extends javafx.application.Application {
     private void initSettings() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(Application.class.getResource("/view/SettingView.fxml"));
+            loader.setLocation(Application.class.getResource("/view/Setting.fxml"));
             AnchorPane settingView = loader.load();
-
             rootLayout.setBottom(settingView);
+
+            configureController(loader);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,5 +104,10 @@ public class Application extends javafx.application.Application {
         this.stage.initStyle(StageStyle.TRANSPARENT);
         this.stage.setTitle("SlyEye");
         this.stage.getIcons().add(new javafx.scene.image.Image(Application.class.getResourceAsStream("/icon/eye-watch-icon-64.png")));
+    }
+
+    private void configureController(FXMLLoader loader) {
+        Configurable controller = loader.getController();
+        controller.configure(this);
     }
 }
