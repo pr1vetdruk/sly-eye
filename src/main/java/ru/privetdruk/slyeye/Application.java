@@ -107,7 +107,7 @@ public class Application extends javafx.application.Application {
     }
 
     private void configureController(FXMLLoader loader) {
-        Configurable controller = loader.getController();
+        Configurable<Application> controller = loader.getController();
         controller.configure(this);
     }
 }

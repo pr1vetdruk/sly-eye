@@ -17,7 +17,7 @@ import ru.privetdruk.slyeye.model.Setting;
 import java.io.IOException;
 import java.time.LocalTime;
 
-public class SettingController implements Configurable {
+public class SettingController implements Configurable<Application> {
     @FXML
     private TextField blinkReminderTF;
     @FXML
@@ -48,7 +48,11 @@ public class SettingController implements Configurable {
     private void onClickEdit() {
         Exercise selectedItem = exerciseTable.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
-            showExerciseDialog(selectedItem);
+            Exercise newExercise = showExerciseDialog(selectedItem);
+            if (!selectedItem.equals(newExercise)) {
+                settings.getExerciseData().remove(selectedItem);
+                settings.getExerciseData().add(newExercise);
+            }
         }
     }
 
@@ -113,7 +117,7 @@ public class SettingController implements Configurable {
         settings.getExerciseData().add(new Exercise(new SimpleIntegerProperty(++count), new SimpleObjectProperty<>(LocalTime.of((hour += gap), min))));
     }
 
-    private void showExerciseDialog(Exercise selectedItem) {
+    private Exercise showExerciseDialog(Exercise selectedItem) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(Application.class.getResource("/view/ExerciseDialog.fxml"));
@@ -127,11 +131,14 @@ public class SettingController implements Configurable {
             dialogStage.setScene(scene);
 
             ExerciseDialogController controller = loader.getController();
-            controller.setSelectedItem(selectedItem);
+            controller.configure(selectedItem);
 
             dialogStage.showAndWait();
+
+            return controller.getExercise();
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
     }
 }
