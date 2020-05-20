@@ -7,7 +7,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import ru.privetdruk.slyeye.controller.Configurable;
-import ru.privetdruk.slyeye.controller.ControlController;
 import ru.privetdruk.slyeye.model.Setting;
 
 import java.io.IOException;

@@ -2,6 +2,8 @@ package ru.privetdruk.slyeye.model;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 import java.time.LocalTime;
 import java.util.Objects;
@@ -17,6 +19,10 @@ public class Exercise implements Comparable<Exercise> {
     public Exercise(IntegerProperty exerciseId, ObjectProperty<LocalTime> exerciseTime) {
         this.exerciseId = exerciseId;
         this.exerciseTime = exerciseTime;
+    }
+
+    public static Exercise generateEmpty() {
+        return new Exercise(new SimpleIntegerProperty(0), new SimpleObjectProperty<>(LocalTime.now()));
     }
 
     @Override

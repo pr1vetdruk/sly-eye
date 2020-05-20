@@ -30,13 +30,13 @@
                   <Slider fx:id="minuteSlider" max="59.0" nodeOrientation="LEFT_TO_RIGHT" orientation="VERTICAL" showTickLabels="true" showTickMarks="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                </children>
             </GridPane>
-            <Label fx:id="timeLabel" text="00:24" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+            <Label fx:id="timeLabel" text="--:--" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
                <font>
                   <Font size="20.0" />
                </font>
             </Label>
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="72.0" text="Save" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="72.0" text="Cancel" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+            <Button mnemonicParsing="false" onAction="#onClickSave" prefHeight="25.0" prefWidth="72.0" text="Save" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+            <Button mnemonicParsing="false" onAction="#onClickClose" prefHeight="25.0" prefWidth="72.0" text="Cancel" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
          </children>
       </GridPane>
    </children>
