@@ -6,18 +6,24 @@ import ru.privetdruk.slyeye.Application;
 import ru.privetdruk.slyeye.model.Setting;
 import ru.privetdruk.slyeye.util.NotificationUtil;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ControlController implements Configurable<Application> {
     private Application application;
     private Setting settings;
 
-    private Timer notificationTimer = new Timer();
+    private final ScheduledExecutorService scheduledNotificationService = Executors.newScheduledThreadPool(4);
+    private List<ScheduledFuture<?>> scheduleList = new ArrayList<>();
+
     private SystemTray tray;
     private TrayIcon trayIcon;
 
@@ -42,8 +48,8 @@ public class ControlController implements Configurable<Application> {
     @FXML
     private void onClickStop() {
         application.setRun(false);
-        notificationTimer.cancel();
-        notificationTimer = new Timer();
+        scheduleList.forEach(task -> task.cancel(false));
+        scheduleList.clear();
     }
 
     @FXML
@@ -77,24 +83,16 @@ public class ControlController implements Configurable<Application> {
     }
 
     private void addNotificationSchedule() {
-        notificationTimer.schedule(
-                new TimerTask() {
-                    @Override
-                    public void run() {
-                        javax.swing.SwingUtilities.invokeLater(() -> {
-                                    trayIcon.displayMessage(
-                                            "Hey!",
-                                            "it's time to get distracted",
-                                            TrayIcon.MessageType.INFO
-                                    );
-                                }
+        scheduleList.add(scheduledNotificationService.scheduleAtFixedRate(() -> {
+            SwingUtilities.invokeLater(() -> {
+                        trayIcon.displayMessage(
+                                "Hey!",
+                                "it's time to get distracted",
+                                TrayIcon.MessageType.INFO
                         );
                     }
-                },
-                1_000,
-                TimeUnit.MINUTES.toMillis(settings.getBlinkReminder())
-        );
-
+            );
+        }, 1, settings.getBlinkReminder(), TimeUnit.MINUTES));
     }
 
     private TrayIcon configureTrayIcon() throws IOException {
@@ -129,7 +127,7 @@ public class ControlController implements Configurable<Application> {
     }
 
     private void exit() {
-        notificationTimer.cancel();
+        scheduledNotificationService.shutdown();
         Platform.exit();
         if (tray != null && trayIcon != null) {
             tray.remove(trayIcon);
