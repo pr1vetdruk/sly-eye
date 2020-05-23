@@ -8,7 +8,6 @@ import ru.privetdruk.slyeye.util.NotificationUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +17,16 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ControlController implements Configurable<Application> {
+    @FXML
+    private javafx.scene.control.Button runButton;
+    @FXML
+    private javafx.scene.control.Button stopButton;
+
     private Application application;
     private Setting settings;
 
     private final ScheduledExecutorService scheduledNotificationService = Executors.newScheduledThreadPool(4);
-    private List<ScheduledFuture<?>> scheduleList = new ArrayList<>();
+    private final List<ScheduledFuture<?>> scheduleList = new ArrayList<>();
 
     private SystemTray tray;
     private TrayIcon trayIcon;
@@ -42,12 +46,16 @@ public class ControlController implements Configurable<Application> {
     @FXML
     private void onClickRun() {
         application.setRun(true);
+        runButton.setDisable(true);
+        stopButton.setDisable(false);
         addNotificationSchedule();
     }
 
     @FXML
     private void onClickStop() {
         application.setRun(false);
+        runButton.setDisable(false);
+        stopButton.setDisable(true);
         scheduleList.forEach(task -> task.cancel(false));
         scheduleList.clear();
     }
@@ -66,7 +74,7 @@ public class ControlController implements Configurable<Application> {
         try {
             Toolkit.getDefaultToolkit();
 
-            if (!java.awt.SystemTray.isSupported()) {
+            if (!SystemTray.isSupported()) {
                 NotificationUtil.showError("", "No system tray support, application exiting.");
                 Platform.exit();
             }
@@ -77,7 +85,7 @@ public class ControlController implements Configurable<Application> {
             trayIcon.setPopupMenu(configurePopupMenu());
 
             tray.add(trayIcon);
-        } catch (java.awt.AWTException | IOException e) {
+        } catch (AWTException e) {
             NotificationUtil.showError("", "Unable to init system tray.");
         }
     }
@@ -95,7 +103,7 @@ public class ControlController implements Configurable<Application> {
         }, 1, settings.getBlinkReminder(), TimeUnit.MINUTES));
     }
 
-    private TrayIcon configureTrayIcon() throws IOException {
+    private TrayIcon configureTrayIcon() {
         URL iconUrl = Application.class.getResource("/icon/eye-watch-icon-16.png");
         TrayIcon trayIcon = new TrayIcon(Toolkit.getDefaultToolkit().getImage(iconUrl), "I'm watching you <_<");
 
@@ -105,20 +113,20 @@ public class ControlController implements Configurable<Application> {
     }
 
     private PopupMenu configurePopupMenu() {
-        java.awt.MenuItem maximizeItem = new java.awt.MenuItem("Maximize");
+        MenuItem maximizeItem = new MenuItem("Maximize");
         maximizeItem.addActionListener(event -> Platform.runLater(application::showStage));
 
-        java.awt.Font monospacedFont = java.awt.Font.decode(Font.MONOSPACED);
-        java.awt.Font boldFont = monospacedFont.deriveFont(java.awt.Font.BOLD);
+        Font monospacedFont = Font.decode(Font.MONOSPACED);
+        Font boldFont = monospacedFont.deriveFont(Font.BOLD);
         maximizeItem.setFont(boldFont);
 
-        java.awt.MenuItem exitItem = new java.awt.MenuItem("Exit");
+        MenuItem exitItem = new MenuItem("Exit");
         exitItem.setFont(monospacedFont);
         exitItem.addActionListener(event -> {
             exit();
         });
 
-        final java.awt.PopupMenu popup = new java.awt.PopupMenu();
+        PopupMenu popup = new PopupMenu();
         popup.add(maximizeItem);
         popup.addSeparator();
         popup.add(exitItem);
