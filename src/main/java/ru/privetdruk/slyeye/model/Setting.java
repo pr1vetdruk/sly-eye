@@ -2,21 +2,20 @@ package ru.privetdruk.slyeye.model;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-
-import java.util.Set;
-import java.util.TreeSet;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class Setting {
     private final IntegerProperty blinkReminder;
-    private final Set<Exercise> exerciseData;
+    private final ObservableList<Exercise> exerciseData;
 
     public Setting() {
         this(null);
     }
 
-    public Setting(Set<Exercise> exerciseData) {
+    public Setting(ObservableList<Exercise> exerciseData) {
         blinkReminder = new SimpleIntegerProperty(20);
-        this.exerciseData = exerciseData == null ? new TreeSet<>() : exerciseData;
+        this.exerciseData = exerciseData == null ? FXCollections.observableArrayList() : exerciseData;
     }
 
     public int getBlinkReminder() {
@@ -31,7 +30,7 @@ public class Setting {
         this.blinkReminder.set(blinkReminder);
     }
 
-    public Set<Exercise> getExerciseData() {
+    public ObservableList<Exercise> getExerciseData() {
         return exerciseData;
     }
 }

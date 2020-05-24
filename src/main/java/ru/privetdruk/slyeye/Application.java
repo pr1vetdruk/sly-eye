@@ -38,26 +38,6 @@ public class Application extends javafx.application.Application {
         }
     }
 
-    public boolean isRun() {
-        return run;
-    }
-
-    public void setRun(boolean run) {
-        this.run = run;
-    }
-
-    public Stage getStage() {
-        return stage;
-    }
-
-    public Setting getSettings() {
-        return settings;
-    }
-
-    public void setSettings(Setting settings) {
-        this.settings = settings;
-    }
-
     private void initRootLayout() {
         try {
             FXMLLoader loader = new FXMLLoader();
@@ -108,5 +88,25 @@ public class Application extends javafx.application.Application {
     private void configureController(FXMLLoader loader) {
         Configurable<Application> controller = loader.getController();
         controller.configure(this);
+    }
+
+    public boolean isRun() {
+        return run;
+    }
+
+    public void setRun(boolean run) {
+        this.run = run;
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public Setting getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Setting settings) {
+        this.settings = settings;
     }
 }

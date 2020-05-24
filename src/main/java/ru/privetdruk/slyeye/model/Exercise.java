@@ -1,33 +1,29 @@
 package ru.privetdruk.slyeye.model;
 
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 import java.time.LocalTime;
 import java.util.Objects;
 
 public class Exercise implements Comparable<Exercise> {
-    private final IntegerProperty exerciseId;
     private final ObjectProperty<LocalTime> exerciseTime;
 
     public Exercise() {
-        this(null, null);
+        this(LocalTime.of(0, 0));
     }
 
-    public Exercise(IntegerProperty exerciseId, ObjectProperty<LocalTime> exerciseTime) {
-        this.exerciseId = exerciseId;
-        this.exerciseTime = exerciseTime;
+    public Exercise(LocalTime localTime) {
+        this.exerciseTime = new SimpleObjectProperty<>(localTime);
     }
 
-    public static Exercise generateEmpty() {
-        return new Exercise(new SimpleIntegerProperty(0), new SimpleObjectProperty<>(LocalTime.now()));
+    public Exercise(Exercise exercise) {
+        exerciseTime = new SimpleObjectProperty<>(exercise.exerciseTime.get());
     }
 
     @Override
     public int compareTo(Exercise o) {
-        return Integer.compare(this.exerciseId.get(), o.exerciseId.get());
+        return this.exerciseTime.get().compareTo(o.exerciseTime.get());
     }
 
     @Override
@@ -37,27 +33,12 @@ public class Exercise implements Comparable<Exercise> {
 
         Exercise exercise = (Exercise) o;
 
-        if (!Objects.equals(exerciseId, exercise.exerciseId)) return false;
         return Objects.equals(exerciseTime, exercise.exerciseTime);
     }
 
     @Override
     public int hashCode() {
-        int result = exerciseId != null ? exerciseId.hashCode() : 0;
-        result = 31 * result + (exerciseTime != null ? exerciseTime.hashCode() : 0);
-        return result;
-    }
-
-    public int getExerciseId() {
-        return exerciseId.get();
-    }
-
-    public IntegerProperty exerciseIdProperty() {
-        return exerciseId;
-    }
-
-    public void setExerciseId(int exerciseId) {
-        this.exerciseId.set(exerciseId);
+        return exerciseTime != null ? exerciseTime.hashCode() : 0;
     }
 
     public LocalTime getExerciseTime() {

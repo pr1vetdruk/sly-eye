@@ -19,8 +19,10 @@ public class ExerciseDialogController implements Configurable<Exercise> {
     @FXML
     private Slider minuteSlider;
 
-    private Exercise exercise = Exercise.generateEmpty();
+    private Exercise exercise = new Exercise();
     private LocalTime exerciseTime = exercise.getExerciseTime();
+
+    private boolean save = false;
 
     @FXML
     private void initialize() {
@@ -37,12 +39,14 @@ public class ExerciseDialogController implements Configurable<Exercise> {
 
     @FXML
     private void onClickSave() {
+        save = true;
         exercise.setExerciseTime(exerciseTime);
         closeWindow();
     }
 
     @FXML
     private void onClickClose() {
+        save = false;;
         closeWindow();
     }
 
@@ -67,5 +71,9 @@ public class ExerciseDialogController implements Configurable<Exercise> {
 
     public Exercise getExercise() {
         return exercise;
+    }
+
+    public boolean isSave() {
+        return save;
     }
 }

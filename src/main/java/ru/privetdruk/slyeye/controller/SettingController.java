@@ -1,7 +1,5 @@
 package ru.privetdruk.slyeye.controller;
 
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import ru.privetdruk.slyeye.Application;
 import ru.privetdruk.slyeye.model.Exercise;
 import ru.privetdruk.slyeye.model.Setting;
@@ -30,28 +29,34 @@ public class SettingController implements Configurable<Application> {
     @FXML
     private TableView<Exercise> exerciseTable;
     @FXML
-    private TableColumn<Exercise, Integer> exerciseIdColumn;
-    @FXML
     private TableColumn<Exercise, LocalTime> exerciseTimeColumn;
 
     private Application application;
-    private final Setting settings = new Setting();
+    private Setting settings = new Setting();
 
     @FXML
     private void initialize() {
         addListener();
-        loadTestData();
-        fillingOutForms();
+    }
+
+    @FXML
+    private void onClickAdd() {
+        Exercise newExercise = new Exercise();
+        boolean isSave = showExerciseDialog(newExercise);
+        if (isSave) {
+            addExercise(newExercise);
+        }
     }
 
     @FXML
     private void onClickEdit() {
         Exercise selectedItem = exerciseTable.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
-            Exercise newExercise = showExerciseDialog(selectedItem);
-            if (!selectedItem.equals(newExercise)) {
+            Exercise editExercise = new Exercise(selectedItem);
+            boolean isSave = showExerciseDialog(editExercise);
+            if (isSave && !selectedItem.equals(editExercise)) {
                 settings.getExerciseData().remove(selectedItem);
-                settings.getExerciseData().add(newExercise);
+                addExercise(editExercise);
             }
         }
     }
@@ -72,6 +77,16 @@ public class SettingController implements Configurable<Application> {
     @Override
     public void configure(Application application) {
         this.application = application;
+        settings = application.getSettings();
+        loadTestData();
+        fillingOutForms();
+    }
+
+    private void addExercise(Exercise exercise) {
+        if(!settings.getExerciseData().contains(exercise)) {
+            settings.getExerciseData().add(exercise);
+            FXCollections.sort(settings.getExerciseData());
+        }
     }
 
     private void addListener() {
@@ -104,20 +119,19 @@ public class SettingController implements Configurable<Application> {
 
     private void fillingOutForms() {
         blinkReminderTF.setText(String.valueOf(settings.getBlinkReminder()));
-        exerciseTable.setItems(FXCollections.observableArrayList(settings.getExerciseData()));
-        exerciseIdColumn.setCellValueFactory(cellData -> cellData.getValue().exerciseIdProperty().asObject());
+        exerciseTable.setItems(settings.getExerciseData());
         exerciseTimeColumn.setCellValueFactory(cellData -> cellData.getValue().exerciseTimeProperty());
     }
 
     private void loadTestData() {
         int count = 0, hour = 4, gap = 6, min = 20;
 
-        settings.getExerciseData().add(new Exercise(new SimpleIntegerProperty(++count), new SimpleObjectProperty<>(LocalTime.of((hour += gap), min))));
-        settings.getExerciseData().add(new Exercise(new SimpleIntegerProperty(++count), new SimpleObjectProperty<>(LocalTime.of((hour += gap), min))));
-        settings.getExerciseData().add(new Exercise(new SimpleIntegerProperty(++count), new SimpleObjectProperty<>(LocalTime.of((hour += gap), min))));
+        settings.getExerciseData().add(new Exercise(LocalTime.of((hour += gap), min)));
+        settings.getExerciseData().add(new Exercise(LocalTime.of((hour += gap), min)));
+        settings.getExerciseData().add(new Exercise(LocalTime.of((hour += gap), min)));
     }
 
-    private Exercise showExerciseDialog(Exercise selectedItem) {
+    private boolean showExerciseDialog(Exercise selectedItem) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(Application.class.getResource("/view/ExerciseDialog.fxml"));
@@ -126,6 +140,7 @@ public class SettingController implements Configurable<Application> {
             Stage dialogStage = new Stage();
             dialogStage.setTitle("Exercise");
             dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initStyle(StageStyle.TRANSPARENT);
             dialogStage.initOwner(application.getStage());
             Scene scene = new Scene(page);
             dialogStage.setScene(scene);
@@ -135,10 +150,10 @@ public class SettingController implements Configurable<Application> {
 
             dialogStage.showAndWait();
 
-            return controller.getExercise();
+            return controller.isSave();
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 }
