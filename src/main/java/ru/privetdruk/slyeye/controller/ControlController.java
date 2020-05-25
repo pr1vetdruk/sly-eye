@@ -7,6 +7,8 @@ import ru.privetdruk.slyeye.model.Setting;
 import ru.privetdruk.slyeye.util.NotificationUtil;
 
 import javax.swing.*;
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.*;
 import java.net.URL;
 import java.util.ArrayList;
@@ -17,6 +19,9 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ControlController implements Configurable<Application> {
+    @SuppressWarnings("deprecation")
+    private static final AudioClip audioNotification = Applet.newAudioClip(Application.class.getResource("/sound/MainNotification.wav"));
+
     @FXML
     private javafx.scene.control.Button runButton;
     @FXML
@@ -93,13 +98,14 @@ public class ControlController implements Configurable<Application> {
     private void addNotificationSchedule() {
         scheduleList.add(scheduledNotificationService.scheduleAtFixedRate(() -> {
             SwingUtilities.invokeLater(() -> {
-                        trayIcon.displayMessage(
-                                "Hey!",
-                                "it's time to get distracted",
-                                TrayIcon.MessageType.INFO
-                        );
-                    }
-            );
+                trayIcon.displayMessage(
+                        "Hey!",
+                        "it's time to get distracted",
+                        TrayIcon.MessageType.INFO
+                );
+
+                audioNotification.play();
+            });
         }, 1, settings.getBlinkReminder(), TimeUnit.MINUTES));
     }
 
