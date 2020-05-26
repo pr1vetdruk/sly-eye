@@ -3,6 +3,7 @@ module slyeye {
     requires javafx.controls;
     requires javafx.fxml;
     requires transitive javafx.graphics;
+    requires java.xml.bind;
 
     opens ru.privetdruk.slyeye.controller to javafx.fxml, javafx.controls, javafx.graphics;
 
