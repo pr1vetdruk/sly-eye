@@ -96,17 +96,19 @@ public class ControlController implements Configurable<Application> {
     }
 
     private void addNotificationSchedule() {
-        scheduleList.add(scheduledNotificationService.scheduleAtFixedRate(() -> {
-            SwingUtilities.invokeLater(() -> {
-                trayIcon.displayMessage(
-                        "Hey!",
-                        "it's time to get distracted",
-                        TrayIcon.MessageType.INFO
-                );
+        if (settings.getBlinkReminder() > 0) {
+            scheduleList.add(scheduledNotificationService.scheduleAtFixedRate(() -> {
+                SwingUtilities.invokeLater(() -> {
+                    trayIcon.displayMessage(
+                            "Hey!",
+                            "it's time to get distracted",
+                            TrayIcon.MessageType.INFO
+                    );
 
-                audioNotification.play();
-            });
-        }, 1, settings.getBlinkReminder(), TimeUnit.MINUTES));
+                    audioNotification.play();
+                });
+            }, 1, settings.getBlinkReminder(), TimeUnit.MINUTES));
+        }
     }
 
     private TrayIcon configureTrayIcon() {

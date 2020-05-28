@@ -7,7 +7,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import ru.privetdruk.slyeye.controller.Configurable;
+import ru.privetdruk.slyeye.model.NotificationSettings;
 import ru.privetdruk.slyeye.model.Setting;
+import ru.privetdruk.slyeye.util.XMLUtil;
 
 import java.io.IOException;
 
@@ -29,6 +31,20 @@ public class Application extends javafx.application.Application {
         initRootLayout();
         initControl();
         initSettings();
+        /*NotificationSettings ns = new NotificationSettings();
+        ns.setBlinkReminder(13);
+        ns.setLocalTime(new ArrayList<LocalTime>() {
+            {
+                add(LocalTime.now());
+                add(LocalTime.now());
+                add(LocalTime.now());
+                add(LocalTime.now());
+            }
+        });*/
+        Setting ns = new Setting();
+        XMLUtil.save(ns, "test6.xml");
+        NotificationSettings ns2 = (NotificationSettings) XMLUtil.read("test5.xml", NotificationSettings.class);
+        int a = 2;
     }
 
     public void showStage() {

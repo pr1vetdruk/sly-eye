@@ -5,9 +5,17 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+@XmlRootElement(name = "Settings")
+@XmlType(propOrder = {"blinkReminder", "exerciseData"})
 public class Setting {
-    private final IntegerProperty blinkReminder;
-    private final ObservableList<Exercise> exerciseData;
+    private IntegerProperty blinkReminder;
+
+    private ObservableList<Exercise> exerciseData;
 
     public Setting() {
         this(null);
@@ -18,6 +26,7 @@ public class Setting {
         this.exerciseData = exerciseData == null ? FXCollections.observableArrayList() : exerciseData;
     }
 
+    @XmlElement(name = "BlinkReminder")
     public int getBlinkReminder() {
         return blinkReminder.get();
     }
@@ -32,5 +41,11 @@ public class Setting {
 
     public ObservableList<Exercise> getExerciseData() {
         return exerciseData;
+    }
+
+    @XmlElementWrapper(name = "ExerciseData")
+    @XmlElement(type = Exercise.class, name = "Exercise")
+    public void setExerciseData(ObservableList<Exercise> exerciseData) {
+        this.exerciseData = exerciseData;
     }
 }
