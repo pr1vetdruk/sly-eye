@@ -7,19 +7,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import ru.privetdruk.slyeye.controller.Configurable;
-import ru.privetdruk.slyeye.model.NotificationSettings;
 import ru.privetdruk.slyeye.model.Setting;
-import ru.privetdruk.slyeye.util.XMLUtil;
 
 import java.io.IOException;
 
 public class Application extends javafx.application.Application {
-    private boolean run = false;
-
     private Stage stage;
     private BorderPane rootLayout;
 
-    private Setting settings = new Setting();
+    private Setting settings;
 
     public static void main(String[] args) {
         launch(args);
@@ -31,20 +27,6 @@ public class Application extends javafx.application.Application {
         initRootLayout();
         initControl();
         initSettings();
-        /*NotificationSettings ns = new NotificationSettings();
-        ns.setBlinkReminder(13);
-        ns.setLocalTime(new ArrayList<LocalTime>() {
-            {
-                add(LocalTime.now());
-                add(LocalTime.now());
-                add(LocalTime.now());
-                add(LocalTime.now());
-            }
-        });*/
-        Setting ns = new Setting();
-        XMLUtil.save(ns, "test6.xml");
-        NotificationSettings ns2 = (NotificationSettings) XMLUtil.read("test5.xml", NotificationSettings.class);
-        int a = 2;
     }
 
     public void showStage() {
@@ -104,14 +86,6 @@ public class Application extends javafx.application.Application {
     private void configureController(FXMLLoader loader) {
         Configurable<Application> controller = loader.getController();
         controller.configure(this);
-    }
-
-    public boolean isRun() {
-        return run;
-    }
-
-    public void setRun(boolean run) {
-        this.run = run;
     }
 
     public Stage getStage() {

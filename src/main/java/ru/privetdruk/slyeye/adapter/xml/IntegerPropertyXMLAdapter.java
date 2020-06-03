@@ -5,14 +5,14 @@ import javafx.beans.property.SimpleIntegerProperty;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-public class IntegerPropertyXMLAdapter extends XmlAdapter<IntegerProperty, Integer> {
+public class IntegerPropertyXMLAdapter extends XmlAdapter<Integer, IntegerProperty> {
     @Override
-    public Integer unmarshal(IntegerProperty v) throws Exception {
-        return v.get();
+    public IntegerProperty unmarshal(Integer v) {
+        return new SimpleIntegerProperty(v);
     }
 
     @Override
-    public IntegerProperty marshal(Integer v) throws Exception {
-        return new SimpleIntegerProperty(v);
+    public Integer marshal(IntegerProperty v) {
+        return v.get();
     }
 }

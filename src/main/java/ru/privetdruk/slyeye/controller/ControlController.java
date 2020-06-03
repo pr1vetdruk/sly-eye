@@ -50,7 +50,6 @@ public class ControlController implements Configurable<Application> {
 
     @FXML
     private void onClickRun() {
-        application.setRun(true);
         runButton.setDisable(true);
         stopButton.setDisable(false);
         addNotificationSchedule();
@@ -58,7 +57,6 @@ public class ControlController implements Configurable<Application> {
 
     @FXML
     private void onClickStop() {
-        application.setRun(false);
         runButton.setDisable(false);
         stopButton.setDisable(true);
         scheduleList.forEach(task -> task.cancel(false));

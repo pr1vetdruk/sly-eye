@@ -2,19 +2,20 @@ package ru.privetdruk.slyeye.model;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import ru.privetdruk.slyeye.adapter.xml.ObjectPropertyXMLAdapter;
+import ru.privetdruk.slyeye.adapter.xml.LocalTimeOPXMLAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalTime;
-import java.util.Objects;
 
-@XmlRootElement(name = "Exercise")
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(propOrder = {"exerciseTime"})
 public class Exercise implements Comparable<Exercise> {
+    @XmlElement(name = "Time")
+    @XmlJavaTypeAdapter(LocalTimeOPXMLAdapter.class)
     private final ObjectProperty<LocalTime> exerciseTime;
 
     public Exercise() {
@@ -41,7 +42,8 @@ public class Exercise implements Comparable<Exercise> {
 
         Exercise exercise = (Exercise) o;
 
-        return Objects.equals(exerciseTime, exercise.exerciseTime);
+        return exerciseTime.get().getHour() == exercise.getExerciseTime().getHour() &&
+                exerciseTime.get().getMinute() == exercise.getExerciseTime().getMinute();
     }
 
     @Override
@@ -53,13 +55,11 @@ public class Exercise implements Comparable<Exercise> {
         return exerciseTime.get();
     }
 
-    public ObjectProperty<LocalTime> exerciseTimeProperty() {
-        return exerciseTime;
-    }
-
-    @XmlElement(name = "Time")
-    @XmlJavaTypeAdapter( value = ObjectPropertyXMLAdapter.class)
     public void setExerciseTime(LocalTime exerciseTime) {
         this.exerciseTime.set(exerciseTime);
+    }
+
+    public ObjectProperty<LocalTime> exerciseTimeProperty() {
+        return exerciseTime;
     }
 }

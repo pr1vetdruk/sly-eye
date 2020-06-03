@@ -4,17 +4,23 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import ru.privetdruk.slyeye.adapter.xml.IntegerPropertyXMLAdapter;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement(name = "Settings")
-@XmlType(propOrder = {"blinkReminder", "exerciseData"})
+@XmlAccessorType(XmlAccessType.FIELD)
+//@XmlType(propOrder = {"blinkReminder", "exerciseData"})
 public class Setting {
+    @XmlElement(name = "BlinkReminder")
+    @XmlJavaTypeAdapter(IntegerPropertyXMLAdapter.class)
     private IntegerProperty blinkReminder;
 
+    @XmlElement(name = "ExerciseData")
     private ObservableList<Exercise> exerciseData;
 
     public Setting() {
@@ -26,7 +32,6 @@ public class Setting {
         this.exerciseData = exerciseData == null ? FXCollections.observableArrayList() : exerciseData;
     }
 
-    @XmlElement(name = "BlinkReminder")
     public int getBlinkReminder() {
         return blinkReminder.get();
     }
@@ -43,8 +48,6 @@ public class Setting {
         return exerciseData;
     }
 
-    @XmlElementWrapper(name = "ExerciseData")
-    @XmlElement(type = Exercise.class, name = "Exercise")
     public void setExerciseData(ObservableList<Exercise> exerciseData) {
         this.exerciseData = exerciseData;
     }

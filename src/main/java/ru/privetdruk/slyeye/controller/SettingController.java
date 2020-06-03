@@ -1,6 +1,7 @@
 package ru.privetdruk.slyeye.controller;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,9 +13,11 @@ import javafx.stage.StageStyle;
 import ru.privetdruk.slyeye.Application;
 import ru.privetdruk.slyeye.model.Exercise;
 import ru.privetdruk.slyeye.model.Setting;
+import ru.privetdruk.slyeye.util.XMLUtil;
 
 import java.io.IOException;
 import java.time.LocalTime;
+import java.util.stream.Collectors;
 
 public class SettingController implements Configurable<Application> {
     @FXML
@@ -32,12 +35,6 @@ public class SettingController implements Configurable<Application> {
     private TableColumn<Exercise, LocalTime> exerciseTimeColumn;
 
     private Application application;
-    private Setting settings = new Setting();
-
-    @FXML
-    private void initialize() {
-        addListener();
-    }
 
     @FXML
     private void onClickAdd() {
@@ -55,7 +52,7 @@ public class SettingController implements Configurable<Application> {
             Exercise editExercise = new Exercise(selectedItem);
             boolean isSave = showExerciseDialog(editExercise);
             if (isSave && !selectedItem.equals(editExercise)) {
-                settings.getExerciseData().remove(selectedItem);
+                exerciseTable.getItems().remove(selectedItem);
                 addExercise(editExercise);
             }
         }
@@ -65,10 +62,10 @@ public class SettingController implements Configurable<Application> {
     private void onClickDelete() {
         Exercise selectedItem = exerciseTable.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
-            settings.getExerciseData().remove(selectedItem);
             exerciseTable.getItems().remove(selectedItem);
+            saveSettings();
 
-            boolean isEmptySettings = settings.getExerciseData().isEmpty();
+            boolean isEmptySettings = exerciseTable.getItems().isEmpty();
             editExerciseButton.setDisable(isEmptySettings);
             deleteExerciseButton.setDisable(isEmptySettings);
         }
@@ -77,16 +74,41 @@ public class SettingController implements Configurable<Application> {
     @Override
     public void configure(Application application) {
         this.application = application;
-        settings = application.getSettings();
-        loadTestData();
+
+        loadingSettings();
+        addListener();
         fillingOutForms();
     }
 
     private void addExercise(Exercise exercise) {
-        if(!settings.getExerciseData().contains(exercise)) {
-            settings.getExerciseData().add(exercise);
-            FXCollections.sort(settings.getExerciseData());
+        boolean isContains = exerciseTable.getItems().stream().anyMatch(item -> item.equals(exercise));
+
+        if (!isContains) {
+            exerciseTable.getItems().add(exercise);
+            FXCollections.sort(exerciseTable.getItems());
+            saveSettings();
         }
+    }
+
+    private void loadingSettings() {
+        Setting settings = (Setting) XMLUtil.read("settings.xml", Setting.class);
+        deleteDuplicateExercise(settings);
+        application.setSettings(settings);
+    }
+
+    private void deleteDuplicateExercise(Setting settings) {
+        long distinct = settings.getExerciseData().stream().distinct().count();
+        long total = settings.getExerciseData().size();
+
+        if (distinct != total) {
+            ObservableList<Exercise> distinctExerciseData = FXCollections.observableArrayList(settings.getExerciseData().stream().distinct().collect(Collectors.toList()));
+            settings.setExerciseData(distinctExerciseData);
+            saveSettings();
+        }
+    }
+
+    private void saveSettings() {
+        XMLUtil.save(application.getSettings(), "settings.xml");
     }
 
     private void addListener() {
@@ -118,17 +140,9 @@ public class SettingController implements Configurable<Application> {
     }
 
     private void fillingOutForms() {
-        blinkReminderTF.setText(String.valueOf(settings.getBlinkReminder()));
-        exerciseTable.setItems(settings.getExerciseData());
+        blinkReminderTF.setText(String.valueOf(application.getSettings().getBlinkReminder()));
+        exerciseTable.setItems(application.getSettings().getExerciseData());
         exerciseTimeColumn.setCellValueFactory(cellData -> cellData.getValue().exerciseTimeProperty());
-    }
-
-    private void loadTestData() {
-        int count = 0, hour = 4, gap = 6, min = 20;
-
-        settings.getExerciseData().add(new Exercise(LocalTime.of((hour += gap), min)));
-        settings.getExerciseData().add(new Exercise(LocalTime.of((hour += gap), min)));
-        settings.getExerciseData().add(new Exercise(LocalTime.of((hour += gap), min)));
     }
 
     private boolean showExerciseDialog(Exercise selectedItem) {
