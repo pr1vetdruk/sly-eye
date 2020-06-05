@@ -3,19 +3,13 @@ package ru.privetdruk.slyeye.controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import ru.privetdruk.slyeye.Application;
-import ru.privetdruk.slyeye.model.Setting;
 import ru.privetdruk.slyeye.util.NotificationUtil;
+import ru.privetdruk.slyeye.concurrent.TaskExecutor;
 
-import javax.swing.*;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class ControlController implements Configurable<Application> {
@@ -28,10 +22,8 @@ public class ControlController implements Configurable<Application> {
     private javafx.scene.control.Button stopButton;
 
     private Application application;
-    private Setting settings;
 
-    private final ScheduledExecutorService scheduledNotificationService = Executors.newScheduledThreadPool(4);
-    private final List<ScheduledFuture<?>> scheduleList = new ArrayList<>();
+    private final TaskExecutor taskExecutor = new TaskExecutor();
 
     private SystemTray tray;
     private TrayIcon trayIcon;
@@ -39,7 +31,6 @@ public class ControlController implements Configurable<Application> {
     @Override
     public void configure(Application application) {
         this.application = application;
-        settings = application.getSettings();
     }
 
     @FXML
@@ -59,8 +50,7 @@ public class ControlController implements Configurable<Application> {
     private void onClickStop() {
         runButton.setDisable(false);
         stopButton.setDisable(true);
-        scheduleList.forEach(task -> task.cancel(false));
-        scheduleList.clear();
+        taskExecutor.cancel();
     }
 
     @FXML
@@ -94,19 +84,36 @@ public class ControlController implements Configurable<Application> {
     }
 
     private void addNotificationSchedule() {
-        if (settings.getBlinkReminder() > 0) {
-            scheduleList.add(scheduledNotificationService.scheduleAtFixedRate(() -> {
-                SwingUtilities.invokeLater(() -> {
-                    trayIcon.displayMessage(
-                            "Hey!",
-                            "it's time to get distracted",
-                            TrayIcon.MessageType.INFO
-                    );
+        class Notification implements Runnable {
+            private final String text;
 
-                    audioNotification.play();
-                });
-            }, 1, settings.getBlinkReminder(), TimeUnit.MINUTES));
+            public Notification(String text) {
+                this.text = text;
+            }
+
+            @Override
+            public void run() {
+                trayIcon.displayMessage(
+                        "Hey!",
+                        text,
+                        TrayIcon.MessageType.INFO
+                );
+
+                audioNotification.play();
+            }
         }
+
+        if (application.getSettings().getBlinkReminder() > 0) {
+            taskExecutor.startExecution(
+                    new Notification("it's time to get distracted"),
+                    1,
+                    application.getSettings().getBlinkReminder(),
+                    TimeUnit.MINUTES);
+        }
+
+        application.getSettings().getExerciseData().forEach(item -> {
+            taskExecutor.startExecution(new Notification("it's time to do the exercises"), item.getExerciseTime());
+        });
     }
 
     private TrayIcon configureTrayIcon() {
@@ -141,7 +148,8 @@ public class ControlController implements Configurable<Application> {
     }
 
     private void exit() {
-        scheduledNotificationService.shutdown();
+        taskExecutor.stop();
+
         Platform.exit();
         if (tray != null && trayIcon != null) {
             tray.remove(trayIcon);
