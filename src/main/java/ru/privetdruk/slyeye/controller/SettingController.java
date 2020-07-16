@@ -114,6 +114,7 @@ public class SettingController implements Configurable<Application> {
     private void addListener() {
         blinkReminderSlider.valueProperty().addListener(((observableValue, oldValue, newValue) -> {
             blinkReminderTF.setText(Integer.toString(newValue.intValue()));
+            application.getSettings().setBlinkReminder(newValue.intValue());
         }));
 
         blinkReminderTF.textProperty().addListener(((observableValue, oldValue, newValue) -> {
@@ -129,6 +130,7 @@ public class SettingController implements Configurable<Application> {
 
             blinkReminderTF.setText(String.valueOf((int) value));
             blinkReminderSlider.setValue(value);
+            application.getSettings().setBlinkReminder((int) value);
         }));
 
         exerciseTable.getSelectionModel().selectedItemProperty().addListener((observableValue, oldValue, newValue) -> {

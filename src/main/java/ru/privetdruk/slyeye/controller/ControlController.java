@@ -10,6 +10,7 @@ import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.*;
 import java.net.URL;
+import java.time.LocalTime;
 import java.util.concurrent.TimeUnit;
 
 public class ControlController implements Configurable<Application> {
@@ -100,14 +101,17 @@ public class ControlController implements Configurable<Application> {
                 );
 
                 audioNotification.play();
+                System.out.println(LocalTime.now());
             }
         }
 
         if (application.getSettings().getBlinkReminder() > 0) {
+            int blinkReminder = application.getSettings().getBlinkReminder();
+
             taskExecutor.startExecution(
                     new Notification("it's time to get distracted"),
-                    1,
-                    application.getSettings().getBlinkReminder(),
+                    blinkReminder,
+                    blinkReminder,
                     TimeUnit.MINUTES);
         }
 
