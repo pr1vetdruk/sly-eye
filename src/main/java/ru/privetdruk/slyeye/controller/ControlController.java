@@ -3,14 +3,14 @@ package ru.privetdruk.slyeye.controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import ru.privetdruk.slyeye.Application;
-import ru.privetdruk.slyeye.util.NotificationUtil;
 import ru.privetdruk.slyeye.concurrent.TaskExecutor;
+import ru.privetdruk.slyeye.concurrent.TaskTime;
+import ru.privetdruk.slyeye.util.NotificationUtil;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.*;
 import java.net.URL;
-import java.time.LocalTime;
 import java.util.concurrent.TimeUnit;
 
 public class ControlController implements Configurable<Application> {
@@ -45,6 +45,7 @@ public class ControlController implements Configurable<Application> {
         runButton.setDisable(true);
         stopButton.setDisable(false);
         addNotificationSchedule();
+        onClickMinimize();
     }
 
     @FXML
@@ -101,7 +102,6 @@ public class ControlController implements Configurable<Application> {
                 );
 
                 audioNotification.play();
-                System.out.println(LocalTime.now());
             }
         }
 
@@ -116,7 +116,7 @@ public class ControlController implements Configurable<Application> {
         }
 
         application.getSettings().getExerciseData().forEach(item -> {
-            taskExecutor.startExecution(new Notification("it's time to do the exercises"), item.getExerciseTime());
+            taskExecutor.startExecution(new Notification("it's time to do the exercises"), new TaskTime(item.getExerciseTime()));
         });
     }
 
